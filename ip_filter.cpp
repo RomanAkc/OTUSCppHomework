@@ -3,6 +3,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
+
+typedef std::vector<std::vector<std::string>> IPPool;
 
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
@@ -29,6 +32,44 @@ std::vector<std::string> split(const std::string &str, char d)
     return r;
 }
 
+//reverse lexicographically sort
+void reverseLexicographicallySort(IPPool& ip_pool)
+{
+    std::sort(ip_pool.begin(), ip_pool.end(), [](const auto& lhs, const auto& rhs) {
+        const int ipsize = 4;
+        for (int i = 0; i < ipsize; ++i)
+        {
+            int lhs_num = std::stoi(lhs[i]);
+            int rhs_num = std::stoi(rhs[i]);
+
+            if (rhs_num == lhs_num)
+                continue;
+
+            return rhs_num < lhs_num;
+        }
+
+        return false;
+    });
+}
+
+void outputIPPool(const IPPool& ip_pool)
+{
+    for (auto& ip : ip_pool)
+    {
+        bool first{ true };
+        for (auto& ip_part : ip)
+        {
+            if (!first)
+                std::cout << ".";
+            else
+                first = false;
+
+            std::cout << ip_part;
+        }
+        std::cout << std::endl;
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     try
@@ -41,21 +82,9 @@ int main(int argc, char const *argv[])
             ip_pool.push_back(split(v.at(0), '.'));
         }
 
-        // TODO reverse lexicographically sort
+        reverseLexicographicallySort(ip_pool);
+        outputIPPool(ip_pool);
 
-        for(std::vector<std::vector<std::string> >::const_iterator ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
-        {
-            for(std::vector<std::string>::const_iterator ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part)
-            {
-                if (ip_part != ip->cbegin())
-                {
-                    std::cout << ".";
-
-                }
-                std::cout << *ip_part;
-            }
-            std::cout << std::endl;
-        }
 
         // 222.173.235.246
         // 222.130.177.64
