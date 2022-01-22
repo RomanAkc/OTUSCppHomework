@@ -16,7 +16,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(ip_filter ip_filter.cpp ip_filter_lib.cpp)
+add_executable(ip_filter ip_filter.cpp ip_filter_lib.cpp ip_filter_lib.h)
 
 set_target_properties(ip_filter PROPERTIES
     CXX_STANDARD 14
@@ -44,7 +44,7 @@ include(CPack)
 
 if(WITH_GOOGLE_TEST)
     enable_testing()
-    add_executable(test_ip_filter test_ip_filter.cpp ip_filter_lib.cpp)
+    add_executable(test_ip_filter test_ip_filter.cpp ip_filter_lib.cpp ip_filter_lib.h)
     target_link_libraries(test_ip_filter gtest_main)
 
     include(GoogleTest)
