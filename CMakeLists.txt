@@ -5,7 +5,18 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(ip_filter VERSION ${PROJECT_VESRION})
 
-add_executable(ip_filter ip_filter.cpp)
+option(WITH_GOOGLE_TEST "Whether to build Google test" ON)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/6b74da4757a549563d7c37c8fae3e704662a043b.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+add_executable(ip_filter ip_filter.cpp ip_filter_lib.cpp)
 
 set_target_properties(ip_filter PROPERTIES
     CXX_STANDARD 14
@@ -30,3 +41,12 @@ set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 set(CPACK_PACKAGE_CONTACT example@example.com)
 include(CPack)
+
+if(WITH_GOOGLE_TEST)
+    enable_testing()
+    add_executable(test_ip_filter test_ip_filter.cpp ip_filter_lib.cpp)
+    target_link_libraries(test_ip_filter gtest_main)
+
+    include(GoogleTest)
+    gtest_discover_tests(test_ip_filter)
+endif()
