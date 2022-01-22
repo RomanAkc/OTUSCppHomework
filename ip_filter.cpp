@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 
-typedef std::vector<std::vector<std::string>> IPPool;
+using IPPool = std::vector<std::vector<std::string>>;
 
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
@@ -70,6 +70,37 @@ void outputIPPool(const IPPool& ip_pool)
     }
 }
 
+IPPool filter(const IPPool& sorted_ip_pool, int first, int second = -1)
+{
+    IPPool result;
+    std::copy_if(sorted_ip_pool.begin(), sorted_ip_pool.end()
+        , std::back_inserter(result)
+        , [first, second](const auto& ip) { 
+            return std::stoi(ip.at(0)) == first
+                && (second == -1 || std::stoi(ip.at(1)) == second);
+        }
+    );
+    return result;
+}
+
+IPPool filter_any(const IPPool& sorted_ip_pool, int byte)
+{
+    IPPool result;
+    std::copy_if(sorted_ip_pool.begin(), sorted_ip_pool.end()
+        , std::back_inserter(result)
+        , [byte](const auto& ip) {
+            for (auto& part : ip)
+            {
+                if (std::stoi(part) == byte)
+                    return true;
+            }
+
+            return false;
+        }
+    );
+    return result;
+}
+
 int main(int argc, char const *argv[])
 {
     try
@@ -85,6 +116,9 @@ int main(int argc, char const *argv[])
         reverseLexicographicallySort(ip_pool);
         outputIPPool(ip_pool);
 
+        outputIPPool(filter(ip_pool, 1));
+        outputIPPool(filter(ip_pool, 46, 70));
+        outputIPPool(filter_any(ip_pool, 46));
 
         // 222.173.235.246
         // 222.130.177.64
