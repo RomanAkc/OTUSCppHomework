@@ -10,7 +10,7 @@
 // (".11", '.') -> ["", "11"]
 // ("11.22", '.') -> ["11", "22"]
 
-int main(int, char const *)
+int main(int, char const **)
 {
     try
     {
