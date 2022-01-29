@@ -1,17 +1,21 @@
 #include <iostream>
 #include <map>
-#include <vector>
 
-#include<MyAllocator.h>
+#include "additional_func.h"
+#include "MyAllocator.h"
+
+using MyCustomAllocator = MyAllocator<std::pair<const int, int>, 10>;
 
 int main(int, char **) {
-	
-	std::map<int, int, std::less<int>, MyAllocator<std::pair<const int, int>>> myMap;
+	const int cntValues = 9;
 
-	for (int i = 0; i < 9; ++i) {
-		myMap.insert({ i,i });
-	}
+	std::map<int, int> standartMap;
+	fillMapFact(standartMap, cntValues);
+	printMap(standartMap);
 
-	std::cout << "Hello, world!" << std::endl;
+	std::map<int, int, std::less<int>, MyCustomAllocator> myMap;
+	fillMapFact(myMap, cntValues);
+	printMap(myMap);
+
 	return 0;
 }

@@ -1,15 +1,14 @@
 #pragma once
-#include <iostream>
 
-template <typename T, std::size_t N = 10>
+template <typename T, std::size_t N>
 struct MyAllocator {
+
 	MyAllocator() {
 		pMemory = reinterpret_cast<T*>(std::malloc(N * sizeof(T)));
-		std::cout << "ctor" << std::endl;
 	}
+
 	~MyAllocator() {
 		std::free(pMemory);
-		std::cout << "dctor" << std::endl;
 	}
 
 	using value_type = T;
@@ -19,17 +18,15 @@ struct MyAllocator {
 	using const_reference = const value_type&;
 
 	value_type* allocate(std::size_t n) {
-		std::cout << "allocate: " << n << std::endl;
-
-		if (index + 1 >= N)
-			throw std::bad_alloc();
-
 		index++;
+
+		if (index > N)
+			throw std::bad_alloc();
 
 		return &pMemory[index - 1];
 	}
 
-	void deallocate(value_type* p, std::size_t N) {}
+	void deallocate(value_type*, std::size_t) {}
 
 	template <typename U, typename... Args>
 	void construct(value_type* p, Args&&... args) {
@@ -42,7 +39,7 @@ struct MyAllocator {
 
 	template <typename O>
 	struct rebind {
-		using other = MyAllocator<O>;
+		using other = MyAllocator<O, N>;
 	};
 
 private:
