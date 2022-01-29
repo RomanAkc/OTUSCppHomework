@@ -5,7 +5,7 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(allocator VERSION ${PROJECT_VESRION})
 
-add_executable(allocator main.cpp MyAllocator.h additional_func.cpp additional_func.h)
+add_executable(allocator main.cpp MyAllocator.h additional_func.cpp additional_func.h MyContainer.h)
 
 set_target_properties(allocator PROPERTIES
     CXX_STANDARD 14

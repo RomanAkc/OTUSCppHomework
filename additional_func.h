@@ -17,3 +17,17 @@ void printMap(const TMap& dest)
 		std::cout << p.first << " " << p.second << std::endl;
 	}
 }
+
+template<typename TCont>
+void fillCont(TCont& cont, int cnt) {
+	for (int i = 0; i < cnt; ++i)
+		cont.push_back(i);
+}
+
+template<typename TCont>
+void printMyCont(TCont& cont)
+{
+	for (auto& obj : cont) {
+		std::cout << obj << std::endl;
+	}
+}

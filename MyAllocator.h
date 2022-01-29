@@ -29,7 +29,7 @@ struct MyAllocator {
 	void deallocate(value_type*, std::size_t) {}
 
 	template <typename U, typename... Args>
-	void construct(value_type* p, Args&&... args) {
+	void construct(U* p, Args&&... args) {
 		new (p) U(std::forward<Args>(args)...);
 	}
 
