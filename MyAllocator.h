@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 template <typename T, std::size_t N>
 struct MyAllocator {
