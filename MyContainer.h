@@ -9,7 +9,7 @@ struct MyContainer
 	MyContainer(MyContainer&& rhs) = delete;
 	MyContainer& operator=(const MyContainer& rhs) = delete;
 	MyContainer& operator=(MyContainer&& rhs) = delete;
-	~MyContainer() { clear(); }
+	virtual ~MyContainer() { clear(); }
 
 	void push_back(const T& obj) {
 		auto p = alloc.allocate(1);
@@ -24,7 +24,7 @@ struct MyContainer
 	}
 
 	void clear() {
-		if (!pBegin)
+		if (empty())
 			return;
 
 		while (true) {
@@ -33,14 +33,17 @@ struct MyContainer
 				pBegin = pBegin->ptrNext;
 				alloc.destroy(p);
 				alloc.deallocate(p, 1);
-			}
-			else {
+			} else {
 				alloc.destroy(pBegin);
 				alloc.deallocate(pBegin, 1);
 				pBegin = nullptr;
 				break;
 			}
 		}
+	}
+
+	bool empty() const {
+		return pBegin == nullptr;
 	}
 
 	template<typename T, typename Alloc>

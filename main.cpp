@@ -5,16 +5,16 @@
 #include "MyAllocator.h"
 #include "MyContainer.h"
 
-using MyCustomAllocator = MyAllocator<std::pair<const int, int>, 10>;
+using MyCustomAllocatorForMap = MyAllocator<std::pair<const int, int>, 10>;
 
 int main(int, char **) {
-	const int cntValues = 9;
+	const int cntValues = 10;
 
 	std::map<int, int> standartMap;
 	fillMapFact(standartMap, cntValues);
 	printMap(standartMap);
 
-	std::map<int, int, std::less<int>, MyCustomAllocator> myMap;
+	std::map<int, int, std::less<int>, MyCustomAllocatorForMap> myMap;
 	fillMapFact(myMap, cntValues);
 	printMap(myMap);
 
