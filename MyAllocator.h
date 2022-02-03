@@ -17,7 +17,7 @@ struct MyAllocator {
 	using reference = value_type&;
 	using const_reference = const value_type&;
 
-	value_type* allocate(std::size_t n) {
+	value_type* allocate(std::size_t) {
 		index++;
 
 		if (index > N)

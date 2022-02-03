@@ -33,7 +33,8 @@ struct MyContainer
 				pBegin = pBegin->ptrNext;
 				alloc.destroy(p);
 				alloc.deallocate(p, 1);
-			} else {
+			}
+			else {
 				alloc.destroy(pBegin);
 				alloc.deallocate(pBegin, 1);
 				pBegin = nullptr;
@@ -46,13 +47,13 @@ struct MyContainer
 		return pBegin == nullptr;
 	}
 
-	template<typename T, typename Alloc>
+	template<typename TT, typename TAlloc>
 	struct iterator {
 	private:
-		typename MyContainer<T, Alloc>::template Node<T>* p{ nullptr };
+		typename MyContainer<TT, TAlloc>::template Node<TT>* p{ nullptr };
 
 	public:
-		iterator(typename MyContainer<T, Alloc>::template Node<T>* p) {
+		iterator(typename MyContainer<TT, TAlloc>::template Node<TT>* p) {
 			this->p = p;
 		}
 		iterator(const iterator&) = default;
@@ -83,16 +84,16 @@ struct MyContainer
 	}
 
 private:
-	template<typename T>
+	template<typename TT>
 	struct Node {
-		Node(const T& d) : data(d) {}
+		Node(const TT& d) : data(d) {}
 		Node(const Node&) = default;
 		Node(Node&&) = default;
 		Node& operator=(const Node&) = default;
 		Node& operator=(Node&&) = default;
 
 		Node* ptrNext{ nullptr };
-		T data;
+		TT data;
 	};
 
 	Node<T>* pBegin{ nullptr };
