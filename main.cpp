@@ -19,11 +19,11 @@ int main(int, char **) {
 	printMap(myMap);
 
 	MyContainer<int> myCont;
-	fillCont(myCont, cntValues);
+	fillMyCont(myCont, cntValues);
 	printMyCont(myCont);
 
 	MyContainer<int, MyAllocator<int, 10>> myContWithMyAlloc;
-	fillCont(myContWithMyAlloc, cntValues);
+	fillMyCont(myContWithMyAlloc, cntValues);
 	printMyCont(myContWithMyAlloc);
 
 	return 0;

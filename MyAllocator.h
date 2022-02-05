@@ -3,7 +3,6 @@
 
 template <typename T, std::size_t N>
 struct MyAllocator {
-
 	MyAllocator() {
 		m_pMemory = reinterpret_cast<T*>(std::malloc(N * sizeof(T)));
 	}

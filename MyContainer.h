@@ -2,8 +2,7 @@
 #include <memory>
 
 template<typename T, class Allocator = std::allocator<T>>
-struct MyContainer
-{
+struct MyContainer {
 	MyContainer() {};
 	MyContainer(const MyContainer& rhs) = delete;
 	MyContainer(MyContainer&& rhs) = delete;
@@ -52,7 +51,7 @@ struct MyContainer
 
 	public:
 		iterator(typename MyContainer<Type, TypeAllocator>::template Node<Type>* p) {
-			this->m_pCurrent = p;
+			m_pCurrent = p;
 		}
 		iterator(const iterator&) = default;
 		iterator(iterator&&) = default;

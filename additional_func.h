@@ -20,9 +20,10 @@ void printMap(const TMap& dest)
 }
 
 template<typename TCont>
-void fillCont(TCont& cont, int cnt) {
-	for (int i = 0; i < cnt; ++i)
+void fillMyCont(TCont& cont, int cnt) {
+	for (int i = 0; i < cnt; ++i) {
 		cont.push_back(i);
+	}
 }
 
 template<typename TCont>
