@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-template<typename T, class Alloc = std::allocator<T>>
+template<typename T, class Allocator = std::allocator<T>>
 struct MyContainer
 {
 	MyContainer() {};
@@ -9,52 +9,50 @@ struct MyContainer
 	MyContainer(MyContainer&& rhs) = delete;
 	MyContainer& operator=(const MyContainer& rhs) = delete;
 	MyContainer& operator=(MyContainer&& rhs) = delete;
-	virtual ~MyContainer() { clear(); }
+	virtual ~MyContainer() { 
+		clear(); 
+	}
 
 	void push_back(const T& obj) {
-		auto p = alloc.allocate(1);
-		alloc.construct(p, obj);
+		auto p = m_allocator.allocate(1);
+		m_allocator.construct(p, obj);
 
-		if (pBegin)
-			pEnd->ptrNext = p;
-		else
-			pBegin = p;
+		if (m_pFirst) {
+			m_pLast->m_pNext = p;
+		} else {
+			m_pFirst = p;
+		}
 
-		pEnd = p;
+		m_pLast = p;
+		m_nSize++;
 	}
 
 	void clear() {
-		if (empty())
-			return;
-
-		while (true) {
-			if (pBegin->ptrNext) {
-				auto p = pBegin;
-				pBegin = pBegin->ptrNext;
-				alloc.destroy(p);
-				alloc.deallocate(p, 1);
-			}
-			else {
-				alloc.destroy(pBegin);
-				alloc.deallocate(pBegin, 1);
-				pBegin = nullptr;
-				break;
-			}
+		while (m_pFirst) {
+			auto p = m_pFirst;
+			m_pFirst = m_pFirst->m_pNext;
+			m_allocator.destroy(p);
+			m_allocator.deallocate(p, 1);
 		}
+		m_nSize = 0;
 	}
 
 	bool empty() const {
-		return pBegin == nullptr;
+		return size() == 0;
 	}
 
-	template<typename TT, typename TAlloc>
+	std::size_t size() const {
+		return m_nSize;
+	}
+
+	template<typename Type, typename TypeAllocator>
 	struct iterator {
 	private:
-		typename MyContainer<TT, TAlloc>::template Node<TT>* p{ nullptr };
+		typename MyContainer<Type, TypeAllocator>::template Node<Type>* m_pCurrent{ nullptr };
 
 	public:
-		iterator(typename MyContainer<TT, TAlloc>::template Node<TT>* p) {
-			this->p = p;
+		iterator(typename MyContainer<Type, TypeAllocator>::template Node<Type>* p) {
+			this->m_pCurrent = p;
 		}
 		iterator(const iterator&) = default;
 		iterator(iterator&&) = default;
@@ -62,42 +60,43 @@ struct MyContainer
 		iterator& operator=(iterator&&) = default;
 
 		bool operator!=(const iterator& rhs) {
-			return p != rhs.p;
+			return m_pCurrent != rhs.m_pCurrent;
 		}
 
 		iterator& operator++() {
-			p = p->ptrNext;
+			m_pCurrent = m_pCurrent->m_pNext;
 			return *this;
 		}
 
 		T& operator*() {
-			return p->data;
+			return m_pCurrent->m_data;
 		}
 	};
 
-	iterator<T, Alloc> begin() {
-		return iterator<T, Alloc>(pBegin);
+	iterator<T, Allocator> begin() {
+		return iterator<T, Allocator>(m_pFirst);
 	}
 
-	iterator<T, Alloc> end() {
-		return iterator<T, Alloc>(nullptr);
+	iterator<T, Allocator> end() {
+		return iterator<T, Allocator>(nullptr);
 	}
 
 private:
-	template<typename TT>
+	template<typename Type>
 	struct Node {
-		Node(const TT& d) : data(d) {}
+		Node(const Type& data) : m_data(data) {}
 		Node(const Node&) = default;
 		Node(Node&&) = default;
 		Node& operator=(const Node&) = default;
 		Node& operator=(Node&&) = default;
 
-		Node* ptrNext{ nullptr };
-		TT data;
+		Node* m_pNext{ nullptr };
+		Type m_data;
 	};
 
-	Node<T>* pBegin{ nullptr };
-	Node<T>* pEnd{ nullptr };
+	Node<T>* m_pFirst{ nullptr };
+	Node<T>* m_pLast{ nullptr };
+	std::size_t m_nSize{ 0 };
 
-	typename Alloc::template rebind<Node<T>>::other alloc;
+	typename Allocator::template rebind<Node<T>>::other m_allocator;
 };

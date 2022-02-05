@@ -5,26 +5,26 @@ template <typename T, std::size_t N>
 struct MyAllocator {
 
 	MyAllocator() {
-		pMemory = reinterpret_cast<T*>(std::malloc(N * sizeof(T)));
+		m_pMemory = reinterpret_cast<T*>(std::malloc(N * sizeof(T)));
 	}
 
 	~MyAllocator() {
-		std::free(pMemory);
+		std::free(m_pMemory);
 	}
 
 	using value_type = T;
-	using pointer = value_type*;
-	using const_pointer = const value_type*;
-	using reference = value_type&;
-	using const_reference = const value_type&;
+	using pointer = T*;
+	using const_pointer = const T*;
+	using reference = T&;
+	using const_reference = const T&;
 
 	value_type* allocate(std::size_t) {
-		index++;
-
-		if (index > N)
+		if (m_nIndex >= N)
 			throw std::bad_alloc();
 
-		return &pMemory[index - 1];
+		m_nIndex++;
+
+		return m_pMemory + (m_nIndex - 1);
 	}
 
 	void deallocate(value_type*, std::size_t) {}
@@ -44,6 +44,6 @@ struct MyAllocator {
 	};
 
 private:
-	T* pMemory{ nullptr };
-	std::size_t index{ 0 };
+	T* m_pMemory{ nullptr };
+	std::size_t m_nIndex{ 0 };
 };
