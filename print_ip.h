@@ -66,13 +66,13 @@ template <int Index = 0, typename... Args>
 typename std::enable_if<
 	Index >= sizeof... (Args)
 	, void>::type
-	print_tuple(const std::tuple<Args...>& tup) {}
+print_tuple(const std::tuple<Args...>& tup) {}
 
 template <int Index = 0, typename... Args>
 typename std::enable_if<
 	Index == (sizeof... (Args) - 1)
 	, void>::type
-	print_tuple(const std::tuple<Args...>& tup) {
+print_tuple(const std::tuple<Args...>& tup) {
 	std::cout << std::get<Index>(tup) << std::endl;
 }
 
@@ -80,7 +80,7 @@ template <int Index = 0, typename... Args>
 typename std::enable_if<
 	Index < (sizeof... (Args) - 1)
 	, void>::type
-	print_tuple(const std::tuple<Args...>& tup) {
+print_tuple(const std::tuple<Args...>& tup) {
 	std::cout << std::get<Index>(tup) << ".";
 	print_tuple<Index + 1, Args...>(tup);
 }
