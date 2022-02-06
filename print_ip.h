@@ -7,7 +7,7 @@
 #include <tuple>
 
 template <typename T>
-typename std::enable_if_t<std::is_integral_v<T>, void>
+typename std::enable_if<std::is_integral<T>::value, void>::type
 print_ip(T num) {
 	int size = sizeof(num);
 	unsigned char* p = reinterpret_cast<unsigned char*>(&num);
@@ -25,7 +25,7 @@ print_ip(T num) {
 }
 
 template <typename T>
-typename std::enable_if_t<std::is_same_v<T, std::string>, void>
+typename std::enable_if<std::is_same<T, std::string>::value, void>::type
 print_ip(const T& str) {
 	std::cout << str << std::endl;
 }
@@ -34,10 +34,10 @@ template < template <typename, typename> typename Container
 	, typename T
 	, typename Allocator = std::allocator<T>
 >
-typename std::enable_if_t<
-	std::is_same_v<Container<T, Allocator>, std::vector<T, Allocator>> ||
-	std::is_same_v<Container<T, Allocator>, std::list<T, Allocator>>
-	, void>
+typename std::enable_if<
+	std::is_same<Container<T, Allocator>, std::vector<T, Allocator>>::value ||
+	std::is_same<Container<T, Allocator>, std::list<T, Allocator>>::value
+	, void>::type
 print_ip(const Container<T, Allocator>& cont) {
 	for(auto it = cont.begin(); it != cont.end(); ++it) {
 		if(it != cont.begin())
