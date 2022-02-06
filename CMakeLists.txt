@@ -8,7 +8,7 @@ project(print_ip VERSION ${PROJECT_VESRION})
 add_executable(print_ip main.cpp print_ip.h)
 
 set_target_properties(print_ip PROPERTIES
-    CXX_STANDARD 14
+    CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
 
