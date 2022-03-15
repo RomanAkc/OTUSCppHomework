@@ -8,7 +8,7 @@ enum class PrimitiveType {
 };
 
 class IGraphicPrimitive {
-	//Все методы (ctor, copy/move, dctor и т. п.) - создаются по дефолту, не будем их прописывать 
+	//All methods (ctor, copy/move, dctor etc.) - create by default 
 };
 
 class Point : public IGraphicPrimitive {
@@ -55,7 +55,7 @@ public:
 		if(m_vecPrimitives.empty())
 			return nullptr;
 
-		//Получаем графический примитив по координате
+		//get primitive by coordinates
 
 		return m_vecPrimitives[0];
 	}
@@ -63,7 +63,6 @@ public:
 private:
 	std::vector<std::shared_ptr<IGraphicPrimitive>> m_vecPrimitives;
 };
-
 
 
 class IModel {
@@ -75,12 +74,12 @@ public:
 	IModel& operator=(const IModel&) = delete;
 	IModel& operator=(IModel&&) = delete;
 
-	virtual std::shared_ptr<IDocument> createDocument() = 0;
-	virtual std::shared_ptr<IDocument> importDocument() = 0;
-	virtual void exportDocument(const std::shared_ptr<IDocument>& pDoc) = 0;
-	virtual void createPrimitive(std::shared_ptr<IDocument> pDoc, PrimitiveType type) = 0;
-	virtual void deletePrimitive(std::shared_ptr<IDocument> pDoc, std::shared_ptr<IGraphicPrimitive> pPrimitive) = 0;
-	virtual std::shared_ptr<IGraphicPrimitive> selectPrimitive(std::shared_ptr<IDocument> pDoc, int x, int y) = 0;
+	virtual void createDocument() = 0;
+	virtual void importDocument() = 0;
+	virtual void exportDocument() = 0;
+	virtual void createPrimitive(PrimitiveType type) = 0;
+	virtual void deletePrimitive(std::shared_ptr<IGraphicPrimitive> pPrimitive) = 0;
+	virtual std::shared_ptr<IGraphicPrimitive> selectPrimitive(int x, int y) = 0;
 };
 
 class DocumentModel : public IModel {
@@ -92,35 +91,31 @@ public:
 	DocumentModel& operator=(const DocumentModel&) = delete;
 	DocumentModel& operator=(DocumentModel&&) = delete;
 
-	std::shared_ptr<IDocument> createDocument() override {
-		//Здесь создаем новый документ
-		return std::shared_ptr<IDocument>(new Document());
+	void createDocument() override {
+		m_pDocument = std::shared_ptr<IDocument>(new Document());
 	}
-	std::shared_ptr<IDocument> importDocument() override {
-		//Здесь испортирует документ из файла
-		return std::shared_ptr<IDocument>(new Document());
+	void importDocument() override {
+		m_pDocument = std::shared_ptr<IDocument>(new Document());
 	}
-	virtual void exportDocument(const std::shared_ptr<IDocument>& pDoc) override {
-		//Экспортируем документ в файл
-	}
-	virtual void createPrimitive(std::shared_ptr<IDocument> pDoc, PrimitiveType type) override {
+	void exportDocument() override {}
+	void createPrimitive(PrimitiveType type) override {
 		//Здесь создаем графический примитив
-		if(auto p = createPrimitive(type))
-			pDoc->addPrimitive(p);
+		if(auto p = createPrimitiveImpl(type))
+			m_pDocument->addPrimitive(p);
 	}
 
-	virtual void deletePrimitive(std::shared_ptr<IDocument> pDoc, std::shared_ptr<IGraphicPrimitive> pPrimitive) {
-		//Удаляем графический примитив
-		pDoc->delPrimitive(pPrimitive);
+	void deletePrimitive(std::shared_ptr<IGraphicPrimitive> pPrimitive) override {
+		m_pDocument->delPrimitive(pPrimitive);
 	}
 
-	virtual std::shared_ptr<IGraphicPrimitive> selectPrimitive(std::shared_ptr<IDocument> pDoc, int x, int y) {
-		//Получаем текущий выбранный графический примитив
-		return pDoc->getPrimitiveByPoint(x, y);
+	std::shared_ptr<IGraphicPrimitive> selectPrimitive(int x, int y) override {
+		return m_pDocument->getPrimitiveByPoint(x, y);
 	}
 
 private: 
-	std::shared_ptr<IGraphicPrimitive> createPrimitive(PrimitiveType type) {
+	std::shared_ptr<IDocument> m_pDocument;
+
+	std::shared_ptr<IGraphicPrimitive> createPrimitiveImpl(PrimitiveType type) {
 		switch(type) {
 		case PrimitiveType::POINT:
 			return std::shared_ptr<IGraphicPrimitive>(new Point());
@@ -183,43 +178,49 @@ public:
 	virtual void handleEvent(std::unique_ptr<Event>) = 0;
 };
 
+class IView;
+
 class Controller : public IController {
 public:
+	Controller(IView* pView) : m_pView(pView) {}
+	Controller(const Controller&) = delete;
+	Controller(Controller&&) = delete;
+	Controller& operator=(const Controller&) = delete;
+	Controller& operator=(Controller&&) = delete;
+	virtual ~Controller() = default;
+
 	virtual void handleEvent(std::unique_ptr<Event> pEvent) override {
-		if(!isCanHandle(pEvent)) {
-			showMessageError("Need document");
-			return;
+		switch(pEvent->getSource()) {
+		case Source::CREATE_PRIMITIVE_BUTTON:
+			//m_pModel->createPrimitive(m_pDocument, );
+			break;
+		default:
+			break;
 		}
-
-		handleEventImpl(pEvent);
 	}
 
 private:
-	void handleEventImpl(const std::unique_ptr<Event>& pEvent) {
-		;
-	}
-
-	bool isCanHandle(const std::unique_ptr<Event>& pEvent) const {
-		return m_pDocument || !isNeedDocument(pEvent);
-	}
-
-	bool isNeedDocument(const std::unique_ptr<Event>& pEvent) const {
-		return pEvent->getSource() != Source::NEW_BUTTON
-			&& pEvent->getSource() != Source::IMPORT_BUTTON;
-	}
-	void showMessageError(const std::string& sMessage) {
-		//Здесь показываем MessageBox с ошибкой
-	}
-
-private:
-	std::shared_ptr<IDocument> m_pDocument;
 	std::shared_ptr<IModel> m_pModel;
+	IView* m_pView {nullptr};
 };
 
-class GraphicInterface {
+class IView {
+public:
+	IView() = default;
+	IView(const IView&) = delete;
+	IView(IView&&) = delete;
+	IView& operator=(const IView&) = delete;
+	IView& operator=(IView&&) = delete;
+	virtual ~IView() = default;
+
+	virtual void showMainDlg() = 0;
+	virtual void UpdateInterface() = 0;
+};
+
+class GraphicInterface : public IView {
 public:
 	GraphicInterface() {
-		m_pDocumentController = std::make_unique<Controller>();
+		m_pDocumentController = std::make_unique<Controller>(this);
 	}
 	GraphicInterface(const GraphicInterface&) = delete;
 	GraphicInterface(GraphicInterface&&) = delete;
@@ -227,15 +228,15 @@ public:
 	GraphicInterface& operator=(GraphicInterface&&) = delete;
 	virtual ~GraphicInterface() = default;
 
-	void showMainDlg() {
-		//Здесь отображаем главный диалог
+	virtual void showMainDlg() override {
+		//show main dlg
 	}
 
 	void UpdateInterface() {
-		//Обновляем окно после изменения модели
+		//update main dlg after model update
 	}
 
-	//Обработчики кнопок
+	//Button clicks:
 	void createNewButton() {
 		m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::NEW_BUTTON));
 	}
@@ -263,37 +264,6 @@ public:
 private:
 	std::unique_ptr<IController> m_pDocumentController;
 
-
-
-
-
-
-
-
-
-	/*std::shared_ptr<IDocument> m_pDocument;
-
-
-
-	std::shared_ptr<IDocument> createNewDocument() {
-		//Здесь добавляем новый документ
-	}
-
-	std::shared_ptr<IDocument> importDocumentFromFile() {
-		//Здесь добавляем новый документ
-	}
-
-	void epxportDocumentToFile(const std::shared_ptr<IDocument>& document) {
-		//Здесь добавляем новый документ
-	}
-
-	std::unique_ptr<IGraphicPrimitive> createGraphicPrimitive() {
-		//Здесь создаем графический примитив
-	}
-
-	void removeGraphicPrimitive(const std::shared_ptr<IDocument>& document) {
-		;
-	}*/
 
 
 };
