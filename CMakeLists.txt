@@ -5,7 +5,7 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(editor VERSION ${PROJECT_VESRION})
 
-add_executable(editor main.cpp)
+add_executable(editor main.cpp primitives.h primitives.cpp document.h document.cpp model.h model.cpp event.h event.cpp view.h controller.h controller.cpp)
 
 set_target_properties(editor PROPERTIES
     CXX_STANDARD 14
