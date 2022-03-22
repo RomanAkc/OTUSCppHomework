@@ -1,6 +1,7 @@
 #pragma once
 
 enum class PrimitiveType {
+    NOTHING,
     POINT,
     LINE,
     TRIANGLE
