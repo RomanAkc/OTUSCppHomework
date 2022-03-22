@@ -6,17 +6,16 @@
 #include "view.h"
 #include "controller.h"
 
-
 class GraphicInterface : public IView {
 public:
-	GraphicInterface() {}
-	GraphicInterface(const GraphicInterface&) = delete;
-	GraphicInterface(GraphicInterface&&) = delete;
-	GraphicInterface& operator=(const GraphicInterface&) = delete;
-	GraphicInterface& operator=(GraphicInterface&&) = delete;
-	virtual ~GraphicInterface() = default;
+    GraphicInterface() {}
+    GraphicInterface(const GraphicInterface&) = delete;
+    GraphicInterface(GraphicInterface&&) = delete;
+    GraphicInterface& operator=(const GraphicInterface&) = delete;
+    GraphicInterface& operator=(GraphicInterface&&) = delete;
+    virtual ~GraphicInterface() = default;
 
-	void showMainDlg() override {
+    void showMainDlg() override {
 		//first show main dlg
 	}
 
@@ -43,37 +42,37 @@ public:
         return {0, 0};
     }
 
-	//Button clicks:
-	void createNewDocButton() override {
-		m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::NEW_BUTTON));
-	}
+    //Button clicks:
+    void createNewDocButton() override {
+        m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::NEW_BUTTON));
+    }
 
-	void importDocButton() override {
-		m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::IMPORT_BUTTON));
-	}
+    void importDocButton() override {
+        m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::IMPORT_BUTTON));
+    }
 
-	void exportDocButton() override {
-		m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::EXPORT_BUTTON));
-	}
+    void exportDocButton() override {
+        m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::EXPORT_BUTTON));
+    }
 
-	void addPrimitiveButton() override {
-		m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::CREATE_PRIMITIVE_BUTTON));
-	}
+    void addPrimitiveButton() override {
+        m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::CREATE_PRIMITIVE_BUTTON));
+    }
 
-	void removePrimitiveButton() override {
-		m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::DELETE_PRIMITIVE_BUTTON));
-	}
+    void removePrimitiveButton() override {
+        m_pDocumentController->handleEvent(std::make_unique<Event>(Type::ButtonClick, Source::DELETE_PRIMITIVE_BUTTON));
+    }
 
-	void selectMouseButton() override {
-		m_pDocumentController->handleEvent(std::make_unique<Event>(Type::MouseButtonClick, Source::SELECT_PRIMITIVE));
-	}
+    void selectMouseButton() override {
+        m_pDocumentController->handleEvent(std::make_unique<Event>(Type::MouseButtonClick, Source::SELECT_PRIMITIVE));
+    }
 
     void setController(std::shared_ptr<IController> pController) {
         m_pDocumentController = pController;
     }
 
 private:
-	std::shared_ptr<IController> m_pDocumentController;
+    std::shared_ptr<IController> m_pDocumentController;
 };
 
 int main(int, char **) {
@@ -101,5 +100,5 @@ int main(int, char **) {
     interface.removePrimitiveButton();
     interface.exportDocButton();
 
-	return 0;
+    return 0;
 }
