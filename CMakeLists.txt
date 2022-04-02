@@ -16,6 +16,10 @@ target_include_directories(bayan
     PRIVATE "${CMAKE_BINARY_DIR}"
 )
 
+find_package(Boost COMPONENTS program_options REQUIRED)
+
+target_link_libraries(bayan ${Boost_LIBRARIES})
+
 if (MSVC)
     target_compile_options(bayan PRIVATE
         /W4
