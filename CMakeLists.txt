@@ -5,7 +5,7 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(bayan VERSION ${PROJECT_VESRION})
 
-add_executable(bayan main.cpp)
+add_executable(bayan main.cpp CommandLineParser.h CommandLineParser.cpp)
 
 set_target_properties(bayan PROPERTIES
     CXX_STANDARD 20

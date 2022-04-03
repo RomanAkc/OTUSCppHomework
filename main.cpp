@@ -1,34 +1,30 @@
 #include <iostream>
-#include <vector>
 #include <string>
-#include <boost/program_options.hpp>
 
-namespace po = boost::program_options;
+#include "CommandLineParser.h"
 
 int main(int argc, char ** argv) {
-    po::options_description desc("Options");
+    CommandLineParser parser;
+    auto parseResult = parser.parse(argc, argv);
 
-    desc.add_options()
-            ("help,h", "This help")
-            ("dir,d", po::value<std::vector<std::string>>()->required()->multitoken(), "Directories for scanning")
-            ("level,l", po::value<int>()->default_value(0), "Scan level: 0 (default) - only current directory, 1 - with subdirectories");
-
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-
-    if(vm.contains("help")) {
-        std::cout << desc << std::endl;
+    if(parseResult.result == Result::R_SHOWHELP) {
+        std::cout << parser << std::endl;
+        return 0;
+    } else if (parseResult.result == Result::R_BADCOMMAND) {
+        std::cout << parseResult.error << std::endl;
+        std::cout << "Bad command line. Use '--help' for more information" << std::endl;
         return 0;
     }
 
-    try {
-        po::notify(vm);
-    } catch (...) {
-        std::cout << "Bad command line. Use --help for more information" << std::endl;
-        return 0;
-    }
+    auto params = parser.getParseParams();
 
-    auto vecDir= vm["dir"].as<std::vector<std::string>>();
+    //TODO: check params (directories, level, wildcards, hash algorithm)
+
+    //TODO: compare
+
+    //TODO: print result
+
+    /*auto vecDir= vm["dir"].as<std::vector<std::string>>();
     for(auto& dir : vecDir) {
         std::cout << dir << std::endl;
     }
@@ -38,8 +34,8 @@ int main(int argc, char ** argv) {
     }
     else {
         std::cout << "Bad command line. Use --help for more information" << std::endl;
-    }
+    }*/
 
-	//std::cout << "Hello, world!" << std::endl;
+	std::cout << "Hello, world!" << std::endl;
 	return 0;
 }
