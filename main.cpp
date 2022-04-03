@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-
 #include "CommandLineParser.h"
 
 int main(int argc, char ** argv) {
@@ -23,7 +22,7 @@ int main(int argc, char ** argv) {
     //TODO: compare
 
     //TODO: print result
- 
+
 	std::cout << "Hello, world!" << std::endl;
 	return 0;
 }
