@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "CommandLineParser.h"
+#include "md5.h"
 
 int main(int argc, char ** argv) {
     CommandLineParser parser;
@@ -16,6 +17,8 @@ int main(int argc, char ** argv) {
     }
 
     auto params = parser.getParseParams();
+
+    std::cout << md5("hello") << std::endl;
 
     //TODO: check params (directories, level, wildcards, hash algorithm)
 

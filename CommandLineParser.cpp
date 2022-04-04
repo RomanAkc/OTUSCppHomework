@@ -32,7 +32,7 @@ ParseResult CommandLineParser::parse(int argc, char **argv) {
     return {Result::R_SUCCESS, ""};
 }
 
-ParseParams CommandLineParser::getParseParams() const {
+CompareParams CommandLineParser::getParseParams() const {
     return {m_vm["dir"].as<std::vector<std::string>>()
             , m_vm.contains("exclude") ? m_vm["exclude"].as<VecStr>() : VecStr()
             , m_vm["level"].as<int>()
