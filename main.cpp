@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "CommandLineParser.h"
-#include "md5.h"
+#include "FilesComparator.h"
 
 int main(int argc, char ** argv) {
     CommandLineParser parser;
@@ -18,7 +18,9 @@ int main(int argc, char ** argv) {
 
     auto params = parser.getParseParams();
 
-    std::cout << md5("hello") << std::endl;
+    FilesComparator fc(params);
+
+    fc.run();
 
     //TODO: check params (directories, level, wildcards, hash algorithm)
 

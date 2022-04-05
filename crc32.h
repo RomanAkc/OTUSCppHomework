@@ -1,8 +1,4 @@
-//
-// Created by roman on 05.04.2022.
-//
+#pragma once
+#include <string>
 
-#ifndef BAYAN_CRC32_H
-#define BAYAN_CRC32_H
-
-#endif //BAYAN_CRC32_H
+std::string crc32(const std::string& my_string);
