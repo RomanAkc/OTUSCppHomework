@@ -1,35 +1,24 @@
 #include "FilesComparator.h"
-#include <filesystem>
-#include <set>
 #include "md5.h"
 #include "crc32.h"
 
-namespace fs = std::filesystem;
+
 
 FilesComparator::FilesComparator(const CompareParams &params)
     : m_params(params) {}
 
 std::vector<std::vector<std::string>> FilesComparator::run() {
-    std::set<fs::path> checkedPaths;
-    std::set<fs::path> checkedFiles;
+    auto filesToCompare = getFilesToCompare();
 
-    //bool bCheckSubFolder = m_params.scanLevel == 1;
-    for(auto& dir : m_params.vecDir) {
-        auto p = fs::path(dir);
-        for(auto& el : fs::directory_iterator(p)) {
-            bool b1 = el.is_directory();
-            bool b2 = el.is_regular_file();
-
-            if(b1)
-                checkedPaths.insert(el.path());
-
-            if(b2)
-                checkedFiles.insert(el.path());
-
-        }
-
-
+    if(filesToCompare.size() <= 1) {
+        //nothing to compare
+        return std::vector<std::vector<std::string>>();
     }
+
+    //TODO: divide files by size
+
+
+
 
 
 
@@ -37,4 +26,27 @@ std::vector<std::vector<std::string>> FilesComparator::run() {
 
 
     return std::vector<std::vector<std::string>>();
+}
+
+VectorFiles FilesComparator::getFilesToCompare() {
+    VectorFiles filesToCompare;
+
+    bool withSubdir = m_params.scanLevel == 1;
+    for(auto& dir : m_params.vecDir) {
+        VectorFiles addFiles;
+        if(withSubdir) {
+            auto it = std::filesystem::recursive_directory_iterator(dir);
+            addFiles = getFilesForDirectory(it);
+
+        } else {
+            auto it = std::filesystem::directory_iterator(dir);
+            addFiles = getFilesForDirectory(it);
+        }
+
+        filesToCompare.insert(filesToCompare.end(), addFiles.begin(), addFiles.end());
+    }
+
+    std::sort(filesToCompare.begin(), filesToCompare.end());
+    filesToCompare.erase(std::unique(filesToCompare.begin(), filesToCompare.end()), filesToCompare.end());
+    return filesToCompare;
 }
