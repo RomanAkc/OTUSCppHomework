@@ -15,7 +15,9 @@ std::vector<std::vector<std::string>> FilesComparator::run() {
         return std::vector<std::vector<std::string>>();
     }
 
-    //TODO: divide files by size
+    auto filesBySize = splitFilesBySize(filesToCompare);
+
+
 
 
 
@@ -50,3 +52,31 @@ VectorFiles FilesComparator::getFilesToCompare() {
     filesToCompare.erase(std::unique(filesToCompare.begin(), filesToCompare.end()), filesToCompare.end());
     return filesToCompare;
 }
+
+FileGroups FilesComparator::splitFilesBySize(const VectorFiles& files) {
+    FileGroups groups;
+    for(auto& file : files) {
+        auto size = roundsizeToBlockSize(std::filesystem::file_size(file));
+        groups[size].push_back(file);
+    }
+    return groups;
+}
+
+std::size_t FilesComparator::roundsizeToBlockSize(std::size_t size) {
+    if(size < m_params.blockSize) {
+        size = m_params.blockSize;
+    } else {
+        auto rest = size % m_params.blockSize;
+        if(rest != 0)
+            size += rest;
+    }
+    return size;
+}
+
+std::vector<std::string> FilesComparator::compareFiles(const VectorFiles &) {
+
+
+    return std::vector<std::string>();
+}
+
+

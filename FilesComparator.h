@@ -3,8 +3,10 @@
 #include <filesystem>
 #include <set>
 #include <vector>
+#include <map>
 
 using VectorFiles = std::vector<std::filesystem::path>;
+using FileGroups = std::map<std::size_t, VectorFiles>;
 
 class FilesComparator {
     // file -> [hash1, hash2, hash3, ...] (std::map<std::string, std::vector<hash>>
@@ -28,4 +30,9 @@ private:
         }
         return filesForCheck;
     }
+
+    FileGroups splitFilesBySize(const VectorFiles& files);
+    std::size_t roundsizeToBlockSize(std::size_t size);
+
+    std::vector<std::string> compareFiles(const VectorFiles& files);
 };
