@@ -4,6 +4,7 @@
 #include <set>
 #include <vector>
 #include <map>
+#include <fstream>
 
 using VectorFiles = std::vector<std::filesystem::path>;
 using FileGroups = std::map<std::size_t, VectorFiles>;
@@ -34,5 +35,7 @@ private:
     FileGroups splitFilesBySize(const VectorFiles& files);
     std::size_t roundsizeToBlockSize(std::size_t size);
 
-    std::vector<std::string> compareFiles(const VectorFiles& files);
+    std::vector<VectorFiles> compareFiles(std::size_t fileSize, const VectorFiles& files);
+    std::vector<VectorFiles> compareFilesStep(const VectorFiles& files, std::map<std::filesystem::path, std::ifstream>& mapOpenedFiles
+                                              , char* buffer, std::size_t readBufSize);
 };
