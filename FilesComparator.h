@@ -27,6 +27,8 @@ private:
         for(auto& el : it) {
             if(el.is_regular_file()) {
                 filesForCheck.push_back(el.path());
+            } else if (el.is_directory()) {
+                // TO DO: check
             }
         }
         return filesForCheck;

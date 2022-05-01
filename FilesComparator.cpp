@@ -20,18 +20,21 @@ std::vector<std::vector<std::string>> FilesComparator::run() {
 
     auto filesBySize = splitFilesBySize(filesToCompare);
 
+    std::vector<std::vector<std::string>> result;
+    for(auto& [size, files] : filesBySize) {
+        auto resCompare = compareFiles(size, files);
+        if(resCompare.empty())
+            continue;
 
+        for(auto& vfiles : resCompare) {
+            std::vector<std::string> vecFileNames(vfiles.size());
+            std::transform(vfiles.begin(), vfiles.end(), vecFileNames.begin()
+                    , [](const auto& file){ return  file.string(); });
+            result.emplace_back(std::move(vecFileNames));
+        }
+    }
 
-
-
-
-
-
-
-
-
-
-    return std::vector<std::vector<std::string>>();
+    return result;
 }
 
 VectorFiles FilesComparator::getFilesToCompare() {
