@@ -99,7 +99,7 @@ std::vector<VectorFiles> FilesComparator::compareFiles(std::size_t fileSize, con
     std::vector<VectorFiles> vecResult;
 
     for(std::size_t i = 0; i < iterCount; ++i) {
-        std::size_t readBufSize = (i == iterCount - 1) ? fileSize % m_params.blockSize : m_params.blockSize;
+        std::size_t readBufSize = /*(i == iterCount - 1) ? fileSize % m_params.blockSize :*/ m_params.blockSize;
         if(i == 0) {
             vecResult = compareFilesStep(files, mapOpenedFiles, buffer, readBufSize);
         } else {
@@ -122,7 +122,6 @@ std::vector<VectorFiles> FilesComparator::compareFiles(std::size_t fileSize, con
 
 std::vector<VectorFiles> FilesComparator::compareFilesStep(const VectorFiles& files, std::map<std::filesystem::path, std::ifstream>& mapOpenedFiles
         , char* buffer, std::size_t readBufSize) {
-
     std::map<std::string, VectorFiles> mapHashToFile;
     for(auto& file : files) {
         mapOpenedFiles[file].read(buffer, readBufSize);

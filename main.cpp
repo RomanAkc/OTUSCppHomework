@@ -20,14 +20,18 @@ int main(int argc, char ** argv) {
 
     FilesComparator fc(params);
 
-    fc.run();
+
 
     //TODO: check params (directories, level, wildcards, hash algorithm)
 
-    //TODO: compare
+    auto vecResult = fc.run();
 
-    //TODO: print result
+    for(auto& equalFiles : vecResult) {
+        for(auto& file : equalFiles) {
+            std::cout << file << std::endl;
+        }
+        std::cout << std::endl;
+    }
 
-	std::cout << "Hello, world!" << std::endl;
 	return 0;
 }
