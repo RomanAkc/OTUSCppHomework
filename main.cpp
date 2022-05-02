@@ -1,7 +1,12 @@
 #include <iostream>
 #include <string>
+#include <boost/algorithm/string.hpp>
 #include "CommandLineParser.h"
 #include "FilesComparator.h"
+#include "HashAlgorithm.h"
+
+
+std::shared_ptr<IHashAlgorithm> makeHashAlgorithm(const std::string& name);
 
 int main(int argc, char ** argv) {
     CommandLineParser parser;
@@ -18,11 +23,16 @@ int main(int argc, char ** argv) {
 
     auto params = parser.getParseParams();
 
-    FilesComparator fc(params);
+    //TODO: check params (directories, level, wildcards) ???
+    //TODO: use exclude dir
+    //TODO: use wildcards
+    //TODO: use hash algo
+    //TODO: add exceptions
+    //TODO: fix code
 
+    auto hashAlgorithm = makeHashAlgorithm(params.algorithm);
 
-
-    //TODO: check params (directories, level, wildcards, hash algorithm)
+    FilesComparator fc(params, hashAlgorithm);
 
     auto vecResult = fc.run();
 
@@ -34,4 +44,13 @@ int main(int argc, char ** argv) {
     }
 
 	return 0;
+}
+
+std::shared_ptr<IHashAlgorithm> makeHashAlgorithm(const std::string& name) {
+    if(boost::iequals(name, "crc32")) {
+        return std::shared_ptr<IHashAlgorithm>(new CRC32HashAlgorithm());
+    } else if(boost::iequals(name, "md5")) {
+        return std::shared_ptr<IHashAlgorithm>(new MD5HashAlgorithm());
+    }
+    return nullptr;
 }

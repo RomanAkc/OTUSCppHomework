@@ -1,12 +1,8 @@
 #include <map>
 #include "FilesComparator.h"
-//#include "md5.h"
-#include "crc32.h"
 
-
-
-FilesComparator::FilesComparator(const CompareParams &params)
-    : m_params(params) {}
+FilesComparator::FilesComparator(const CompareParams &params, const std::shared_ptr<IHashAlgorithm>& hashAlgorithm)
+    : m_params(params), m_hashAlgorithm(hashAlgorithm)  {}
 
 std::vector<std::vector<std::string>> FilesComparator::run() {
     auto filesToCompare = getFilesToCompare();
@@ -88,7 +84,7 @@ std::vector<VectorFiles> FilesComparator::compareFiles(std::size_t fileSize, con
 
     std::size_t iterCount = fileSize / m_params.blockSize + (fileSize % m_params.blockSize != 0 ? 1 : 0);
 
-    char* buffer = new char[m_params.blockSize];
+    char* buffer = new char[m_params.blockSize + 1];
 
     std::map<std::filesystem::path, std::ifstream> mapOpenedFiles;
     for(auto& file : files) {
@@ -99,7 +95,8 @@ std::vector<VectorFiles> FilesComparator::compareFiles(std::size_t fileSize, con
     std::vector<VectorFiles> vecResult;
 
     for(std::size_t i = 0; i < iterCount; ++i) {
-        std::size_t readBufSize = /*(i == iterCount - 1) ? fileSize % m_params.blockSize :*/ m_params.blockSize;
+        bool last = (i == iterCount - 1);
+        std::size_t readBufSize = last && (fileSize % m_params.blockSize != 0) ? fileSize % m_params.blockSize : m_params.blockSize;
         if(i == 0) {
             vecResult = compareFilesStep(files, mapOpenedFiles, buffer, readBufSize);
         } else {
@@ -126,8 +123,9 @@ std::vector<VectorFiles> FilesComparator::compareFilesStep(const VectorFiles& fi
     for(auto& file : files) {
         mapOpenedFiles[file].read(buffer, readBufSize);
 
-        //TODO: to use differenf alg
-        auto s = crc32(buffer);
+        std::string tmp = std::string(buffer, readBufSize);
+
+        auto s = m_hashAlgorithm->calcHash(tmp);
 
         mapHashToFile[s].push_back(file);
     }
